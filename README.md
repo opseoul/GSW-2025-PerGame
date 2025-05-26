@@ -7,101 +7,96 @@ This project analyzes Golden State Warriors player performance using publicly av
 ## 📊 Dataset
 
 - **Source**: [Basketball Reference – GSW 2025](https://www.basketball-reference.com/teams/GSW/2025.html)
-- **Format**: Per-game player stats (CSV format)
-- **Features include**:
-  - Player: Name
-  - Pos: Position
-  - MP: Minutes per Game
-  - PTS: Points per Game
-  - FG%, AST, TRB, STL, BLK, TOV, and more
+- **Format**: Per-game player stats
+- **Columns include**: Player, Position, Minutes Played (MP), Points (PTS), Field Goal %, Assists (AST), Rebounds (TRB), Steals (STL), Blocks (BLK), Turnovers (TOV), and more.
 
 ---
 
 ## 🧼 Data Cleaning
 
-- Removed the **"Team Totals"** row
-- Converted relevant performance columns to numeric
-- Created custom efficiency metrics:
-  - `Scoring_Efficiency = PTS / FGA`
-  - `All_Around_Efficiency = PTS + AST + TRB + STL + BLK`
+- Removed the `"Team Totals"` row
+- Converted numeric columns using `pd.to_numeric`
+- Created two custom metrics:
+  - **Scoring Efficiency** = PTS ÷ FGA
+  - **All-Around Efficiency** = PTS + AST + TRB + STL + BLK
 
-```python
-# Drop team total row
-df = df[df["Player"] != "Team Totals"]
+---
 
-# Convert numeric columns
-for col in df.columns[3:-2]:
-    df[col] = pd.to_numeric(df[col], errors='coerce')
+## 🌟 Top Player Metrics
 
-🌟 Top Player Metrics
-🔥 Top 5 – Scoring Efficiency
-df[["Player", "Scoring_Efficiency"]]
-   .sort_values(by="Scoring_Efficiency", ascending=False)
-   .head(5)
-🔁 Top 5 – All-Around Efficiency
-df[["Player", "All_Around_Efficiency"]]
-   .sort_values(by="All_Around_Efficiency", ascending=False)
-   .head(5)
-📊 Visualizations
-🏀 Top 10 Scorers
-sns.barplot(data=top_scorers, x="PTS", y="Player", palette="viridis")
+### 🔥 Top 5 Scorers by Efficiency
+Players ranked by their points scored per field goal attempt.
 
-⏱️ Minutes vs Points (Colored by Position)
-df_clean = df[['MP', 'PTS', 'Pos']].dropna()
-df_clean['Pos'] = df_clean['Pos'].astype(str).str.strip()
-sns.scatterplot(data=df_clean, x="MP", y="PTS", hue="Pos")
+### 🧮 Top 5 All-Around Players
+Players contributing across scoring, assists, rebounds, steals, and blocks.
 
-📈 Correlation Heatmap
-sns.heatmap(df_clean.corr(numeric_only=True), annot=True, cmap="coolwarm")
-🧍 Starters vs Bench – Points Comparison
-df['Role'] = df['GS'].apply(lambda x: 'Starter' if x > 30 else 'Bench')
-sns.boxplot(data=df, x='Role', y='PTS')
+---
 
-🔍 Player Role Clustering (KMeans)
-🎯 Objective
-Use clustering to segment players into:
+## 📊 Visualizations
 
-High-Impact Starters
+### 🏀 Top 10 Scorers
+A horizontal bar chart showing the 10 highest-scoring players on the team.
 
-Role Players
+### ⏱️ Minutes vs Points (Colored by Position)
+A scatter plot illustrating how playing time correlates with scoring, with points colored by player position (PG, SG, SF, PF, C).
 
-Bench/Development
+### 📈 Correlation Heatmap
+A heatmap showing correlations between major performance indicators like points, assists, rebounds, etc.
 
-📊 Features Used for Clustering
-features = ['MP', 'PTS', 'AST', 'TRB', 'FG%', 'STL', 'BLK', 'TOV']
-⚙️ Clustering Workflow
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(df_cluster)
+### 🧍 Starter vs Bench Comparison
+A box plot comparing points scored by starters vs bench players.
 
-kmeans = KMeans(n_clusters=3, random_state=42)
-df_cluster['Cluster'] = kmeans.fit_predict(X_scaled)
+---
 
-label_map = {
-    0: 'High-Impact Starter',
-    1: 'Role Player',
-    2: 'Bench/Development'
-}
-df_cluster['Role'] = df_cluster['Cluster'].map(label_map)
-📍 Visualization
-sns.scatterplot(data=df_cluster, x='MP', y='PTS', hue='Role', palette='Set2')
+## 🔍 KMeans Player Role Clustering
 
-📌 Summary
-This analysis provides a data-driven breakdown of the Golden State Warriors’ roster using advanced metrics and clustering. It helps uncover player strengths, roles, and potential development paths for lineup optimization and coaching decisions.
+### 🎯 Objective
+Segment players into meaningful performance-based roles:
+- **High-Impact Starters**
+- **Role Players**
+- **Bench/Development**
 
-📁 Files Included
-GSW_2025_PerGame.csv – Raw dataset
+### ⚙️ Features Used for Clustering
+- Minutes Played (MP)
+- Points Scored (PTS)
+- Assists (AST)
+- Rebounds (TRB)
+- Field Goal % (FG%)
+- Steals (STL)
+- Blocks (BLK)
+- Turnovers (TOV)
 
-GSW_Player_Analysis.ipynb – Full Jupyter Notebook
+### 🧪 Clustering Process
+- Missing values were dropped.
+- Features were scaled using `StandardScaler`.
+- KMeans with 3 clusters was applied to segment players.
+- Clusters were mapped to interpretive labels:
+  - Cluster 0 → High-Impact Starter
+  - Cluster 1 → Role Player
+  - Cluster 2 → Bench/Development
 
-README.md – Project overview
+### 📍 Visualization
+Scatter plot of Minutes vs Points with players colored by cluster-defined role.
 
-🧰 Tools Used
-Languages: Python (Pandas, NumPy)
+---
 
-Visualization: Seaborn, Matplotlib
+## 📅 Summary
 
-Modeling: scikit-learn (KMeans, StandardScaler)
+This project provides a data-driven view of Golden State Warriors’ player performance during the 2025 NBA season. It highlights key players, reveals correlations, and segments the roster into roles that can inform coaching, rotations, and player development.
 
-Notebook: Jupyter
+---
 
-Source: Basketball Reference – GSW 2025 (https://www.basketball-reference.com/teams/GSW/2025.html)
+## 📁 Files Included
+
+- `GSW_2025_PerGame.csv` – Raw per-game statistics
+- `GSW_Player_Analysis.ipynb` – Jupyter Notebook with full analysis
+- `README.md` – Project overview
+
+---
+
+## 🧰 Tools Used
+
+- **Language**: Python
+- **Libraries**: Pandas, Seaborn, Matplotlib, scikit-learn
+- **Environment**: Jupyter Notebook
+- **Data Source**: [Basketball Reference – GSW 2025](https://www.basketball-reference.com/teams/GSW/2025.html)
