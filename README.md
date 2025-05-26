@@ -35,43 +35,28 @@ for col in df.columns[3:-2]:
 
 🌟 Top Player Metrics
 🔥 Top 5 – Scoring Efficiency
-python
-Copy
-Edit
 df[["Player", "Scoring_Efficiency"]]
    .sort_values(by="Scoring_Efficiency", ascending=False)
    .head(5)
 🔁 Top 5 – All-Around Efficiency
-python
-Copy
-Edit
 df[["Player", "All_Around_Efficiency"]]
    .sort_values(by="All_Around_Efficiency", ascending=False)
    .head(5)
 📊 Visualizations
 🏀 Top 10 Scorers
-python
-Copy
-Edit
 sns.barplot(data=top_scorers, x="PTS", y="Player", palette="viridis")
+
 ⏱️ Minutes vs Points (Colored by Position)
-python
-Copy
-Edit
 df_clean = df[['MP', 'PTS', 'Pos']].dropna()
 df_clean['Pos'] = df_clean['Pos'].astype(str).str.strip()
 sns.scatterplot(data=df_clean, x="MP", y="PTS", hue="Pos")
+
 📈 Correlation Heatmap
-python
-Copy
-Edit
 sns.heatmap(df_clean.corr(numeric_only=True), annot=True, cmap="coolwarm")
 🧍 Starters vs Bench – Points Comparison
-python
-Copy
-Edit
 df['Role'] = df['GS'].apply(lambda x: 'Starter' if x > 30 else 'Bench')
 sns.boxplot(data=df, x='Role', y='PTS')
+
 🔍 Player Role Clustering (KMeans)
 🎯 Objective
 Use clustering to segment players into:
@@ -83,14 +68,8 @@ Role Players
 Bench/Development
 
 📊 Features Used for Clustering
-python
-Copy
-Edit
 features = ['MP', 'PTS', 'AST', 'TRB', 'FG%', 'STL', 'BLK', 'TOV']
 ⚙️ Clustering Workflow
-python
-Copy
-Edit
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(df_cluster)
 
@@ -104,10 +83,8 @@ label_map = {
 }
 df_cluster['Role'] = df_cluster['Cluster'].map(label_map)
 📍 Visualization
-python
-Copy
-Edit
 sns.scatterplot(data=df_cluster, x='MP', y='PTS', hue='Role', palette='Set2')
+
 📌 Summary
 This analysis provides a data-driven breakdown of the Golden State Warriors’ roster using advanced metrics and clustering. It helps uncover player strengths, roles, and potential development paths for lineup optimization and coaching decisions.
 
@@ -127,5 +104,4 @@ Modeling: scikit-learn (KMeans, StandardScaler)
 
 Notebook: Jupyter
 
-Source: Basketball Reference – GSW 2025
-
+Source: Basketball Reference – GSW 2025 (https://www.basketball-reference.com/teams/GSW/2025.html)
